@@ -1,6 +1,6 @@
+import 'package:afarscape/features/features/posts/presentation/screens/post_detail_screen.dart';
 import 'package:flutter/material.dart';
 import '../../domain/entities/post.dart';
-import '../pages/post_detail_page.dart';
 
 class PostItem extends StatelessWidget {
   final Post post;
@@ -14,7 +14,7 @@ class PostItem extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PostDetailPage(post: post),
+            builder: (context) => PostDetailScreen(post: post),
           ),
         );
       },

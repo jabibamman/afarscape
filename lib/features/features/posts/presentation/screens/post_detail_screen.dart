@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/post.dart';
 
-class PostDetailPage extends StatelessWidget {
+class PostDetailScreen extends StatelessWidget {
   final Post post;
 
-  const PostDetailPage({super.key, required this.post});
+  const PostDetailScreen({super.key, required this.post});
 
   @override
   Widget build(BuildContext context) {

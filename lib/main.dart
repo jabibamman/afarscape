@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'core/theme/app_theme.dart';
+import 'features/features/posts/presentation/app_router.dart';
 import 'features/features/posts/presentation/blocs/post_bloc/post_bloc.dart';
 import 'features/features/posts/presentation/blocs/post_bloc/post_event.dart';
-import 'features/features/posts/presentation/pages/post_list_page.dart';
 import 'injection.dart' as di;
-import 'injection.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,14 +18,14 @@ class Afarscape extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Afarscape',
-      theme: DjiboutiTheme.lightTheme,
-      home: BlocProvider(
-        create: (_) => sl<PostBloc>()..add(LoadPosts()),
-        child: const PostListPage(),
+    return BlocProvider(
+      create: (_) => di.sl<PostBloc>()..add(LoadPosts()),
+      child: MaterialApp(
+        title: 'Afarscape',
+        theme: DjiboutiTheme.lightTheme,
+        initialRoute: AppRouter.postList,
+        onGenerateRoute: AppRouter.onGenerateRoute,
       ),
     );
   }
 }
-
