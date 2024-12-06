@@ -4,7 +4,7 @@ import 'features/features/posts/data/datasources/fake_post_datasource.dart';
 import 'features/features/posts/data/datasources/post_datasource.dart';
 import 'features/features/posts/data/repositories/post_repository_impl.dart';
 import 'features/features/posts/domain/repositories/post_repository.dart';
-import 'features/features/posts/presentation/blocs/post_bloc.dart';
+import 'features/features/posts/presentation/blocs/post_bloc/post_bloc.dart';
 
 
 

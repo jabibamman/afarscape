@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'core/theme/app_theme.dart';
-import 'features/features/posts/presentation/blocs/post_bloc.dart';
+import 'features/features/posts/presentation/blocs/post_bloc/post_bloc.dart';
+import 'features/features/posts/presentation/blocs/post_bloc/post_event.dart';
 import 'features/features/posts/presentation/pages/post_list_page.dart';
 import 'injection.dart' as di;
 import 'injection.dart';
