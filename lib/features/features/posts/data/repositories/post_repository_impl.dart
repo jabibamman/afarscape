@@ -1,14 +1,29 @@
+import '../datasources/post_datasource.dart';
 import '../../domain/entities/post.dart';
 import '../../domain/repositories/post_repository.dart';
-import '../datasources/fake_post_datasource.dart';
 
 class PostRepositoryImpl implements PostRepository {
-  final FakePostDataSource dataSource;
+  final PostDataSource dataSource;
 
   PostRepositoryImpl({required this.dataSource});
 
   @override
   Future<List<Post>> getPosts() {
-    return dataSource.fetchPosts();
+    return dataSource.getAllPosts();
+  }
+
+  @override
+  Future<Post> createPost(Post post) {
+    return dataSource.createPost(post);
+  }
+
+  @override
+  Future<Post> updatePost(Post post) {
+    return dataSource.updatePost(post);
+  }
+
+  @override
+  Future<void> deletePost(Post post) {
+    return dataSource.deletePost(post);
   }
 }
