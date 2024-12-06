@@ -13,4 +13,16 @@ class AppColors {
   static const Color onSurface = Color(0xFF333333); // texte principal
   static const Color onBackground = Color(0xFF333333); // texte secondaire
   static const Color onError = Colors.white; // texte sur fond rouge
+
+  static const ColorScheme darkColorScheme = ColorScheme(
+    brightness: Brightness.dark,
+    primary: Color(0xFF3B82CC),
+    onPrimary: Colors.black,
+    secondary: Color(0xFF8DBF4F),
+    onSecondary: Colors.black,
+    surface: Color(0xFF2C2C2C),
+    onSurface: Colors.white,
+    error: Color(0xFFCF6679),
+    onError: Colors.black,
+  );
 }

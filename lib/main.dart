@@ -23,6 +23,8 @@ class Afarscape extends StatelessWidget {
       child: MaterialApp(
         title: 'Afarscape',
         theme: DjiboutiTheme.lightTheme,
+        darkTheme: DjiboutiTheme.darkTheme,
+        themeMode: ThemeMode.system,
         initialRoute: AppRouter.postList,
         onGenerateRoute: AppRouter.onGenerateRoute,
       ),

@@ -5,16 +5,18 @@ class CustomAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SliverAppBar(
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return SliverAppBar(
       floating: true,
       pinned: false,
-      backgroundColor: Colors.white,
+      backgroundColor: colorScheme.surface,
       elevation: 0,
       centerTitle: true,
       title: Icon(
         Icons.travel_explore,
         size: 30,
-        color: Colors.blueAccent,
+        color: colorScheme.primary,
       ),
     );
   }
