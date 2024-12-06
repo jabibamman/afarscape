@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/post_bloc/post_bloc.dart';
 import '../blocs/post_bloc/post_state.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/post_item.dart';
 
 class PostListPage extends StatelessWidget {
   const PostListPage({super.key});
@@ -16,46 +18,12 @@ class PostListPage extends StatelessWidget {
           } else if (state is PostLoaded) {
             return CustomScrollView(
               slivers: [
-                const SliverAppBar(
-                  floating: true,
-                  pinned: false,
-                  backgroundColor: Colors.white,
-                  elevation: 0,
-                  centerTitle: true,
-                  title: Icon(
-                    Icons.travel_explore,
-                    size: 30,
-                    color: Colors.blueAccent,
-                  ),
-                ),
+                const CustomAppBar(),
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
                         (context, index) {
                       final post = state.posts[index];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        elevation: 2,
-                        child: ListTile(
-                          title: Text(
-                            post.title,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                          subtitle: Text(
-                            post.description,
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                          leading: const Icon(
-                            Icons.place,
-                            color: Colors.blueAccent,
-                          ),
-                        ),
-                      );
+                      return PostItem(post: post);
                     },
                     childCount: state.posts.length,
                   ),
