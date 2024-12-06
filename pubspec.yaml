@@ -31,10 +31,22 @@ dependencies:
   flutter:
     sdk: flutter
 
+  flutter_bloc: ^8.1.6
+  equatable: ^2.0.7
+  get_it: ^8.0.2 # Je l'utilise pour l'injection de dépendances
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
+  http: ^1.2.2
+
+  json_serializable: ^6.9.0 # Potentiellement a supprimer si non utilisation de JSON
+  build_runner: ^2.4.13
+
   cupertino_icons: ^1.0.8
+
+  lottie: ^3.1.3 # Pour des animations pour améliorer le design
+  #cached_network_image: ^3.2.3 # cache pour les images téléchargées
+
+  #flutter_svg: ^1.1.6   # icônes ou illustrations SVG
+  #google_fonts: ^3.1.1  # polices Google
 
 dev_dependencies:
   flutter_test:
