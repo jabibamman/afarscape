@@ -1,12 +1,13 @@
 import 'dart:async';
+import '../../../../../core/errors/exceptions.dart';
 import '../../domain/entities/post.dart';
 import 'post_datasource.dart';
 
 class FakePostsDataSource extends PostDataSource {
   final List<Post> _fakePosts = [
-    Post(id: '1', title: 'Lake Assal', description: 'The saltiest lake in the world.'),
-    Post(id: '2', title: 'Moucha Island', description: 'A beautiful coral island in Djibouti.'),
-    Post(id: '3', title: 'Arta Beach', description: 'A popular snorkeling spot with incredible marine life.'),
+    const Post(id: '1', title: 'Lake Assal', description: 'The saltiest lake in the world.'),
+    const Post(id: '2', title: 'Moucha Island', description: 'A beautiful coral island in Djibouti.'),
+    const Post(id: '3', title: 'Arta Beach', description: 'A popular snorkeling spot with incredible marine life.'),
   ];
 
   @override
@@ -35,12 +36,12 @@ class FakePostsDataSource extends PostDataSource {
       _fakePosts[index] = updatedPost;
       return updatedPost;
     } else {
-      throw Exception('Post not found');
+      throw PostNotFoundException('Post with id ${updatedPost.id} not found.');
     }
   }
 
   @override
   Future<void> deletePost(Post post) {
-    throw UnimplementedError();
+    throw UnimplementedFeatureException('Delete Post');
   }
 }
