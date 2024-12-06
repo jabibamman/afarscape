@@ -12,7 +12,6 @@ class PostListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scrollController = ScrollController();
-
     void onScroll() {
       if (scrollController.position.pixels >= scrollController.position.maxScrollExtent) {
         context.read<PostBloc>().add(LoadMorePosts());
@@ -54,6 +53,10 @@ class PostListPage extends StatelessWidget {
                     ),
                   ),
                 ],
+              );
+            } else if (state is PostDeleting) {
+              return const Center(
+                child: CircularProgressIndicator(),
               );
             } else {
               return const Center(

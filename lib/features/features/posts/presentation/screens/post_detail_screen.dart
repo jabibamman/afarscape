@@ -20,7 +20,6 @@ class PostDetailScreen extends StatelessWidget {
       body: BlocConsumer<PostBloc, PostState>(
         listener: (context, state) {
           if (state is PostDeleteSuccess) {
-            // Navigate back to the list screen after deletion is complete
             Navigator.of(context).pop();
           } else if (state is PostDeleteError) {
             ScaffoldMessenger.of(context).showSnackBar(

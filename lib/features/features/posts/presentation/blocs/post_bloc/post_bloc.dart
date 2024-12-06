@@ -73,7 +73,6 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   Future<void> _onDeletePost(DeletePostEvent event, Emitter<PostState> emit) async {
     if (state is PostLoaded) {
       final currentState = state as PostLoaded;
-
       emit(PostDeleting());
 
       try {
