@@ -13,6 +13,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   PostBloc({required this.repository}) : super(PostLoading()) {
     on<LoadPosts>(_onLoadPosts);
     on<LoadMorePosts>(_onLoadMorePosts);
+    on<UpdatePostEvent>(_onUpdatePost);
   }
 
   Future<void> _onLoadPosts(LoadPosts event, Emitter<PostState> emit) async {
@@ -38,6 +39,24 @@ class PostBloc extends Bloc<PostEvent, PostState> {
           currentState.posts + newPosts,
           hasReachedEnd: newPosts.length < _pageSize,
         ));
+      } catch (_) {
+        emit(PostError());
+      }
+    }
+  }
+
+  Future<void> _onUpdatePost(UpdatePostEvent event, Emitter<PostState> emit) async {
+    if (state is PostLoaded) {
+      final currentState = state as PostLoaded;
+
+      final updatedPosts = currentState.posts.map((post) {
+        return post.id == event.updatedPost.id ? event.updatedPost : post;
+      }).toList();
+
+      emit(PostLoaded(updatedPosts, hasReachedEnd: currentState.hasReachedEnd));
+
+      try {
+        await repository.updatePost(event.updatedPost);
       } catch (_) {
         emit(PostError());
       }
