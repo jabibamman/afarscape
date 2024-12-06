@@ -31,6 +31,10 @@ dependencies:
   flutter:
     sdk: flutter
 
+
+  mockito: ^5.4.4
+  bloc_test: ^9.1.7
+
   flutter_bloc: ^8.1.6
   equatable: ^2.0.7
   get_it: ^8.0.2 # Je l'utilise pour l'injection de dépendances
