@@ -26,6 +26,18 @@ class FakePostsDataSource extends PostDataSource {
   }
 
   @override
+  Future<List<Post>> getPaginatedPosts(int offset, int limit) async {
+    await Future.delayed(const Duration(seconds: 1));
+    if (offset >= _fakePosts.length) {
+      return [];
+    }
+    return _fakePosts.sublist(
+      offset,
+      (offset + limit) > _fakePosts.length ? _fakePosts.length : offset + limit,
+    );
+  }
+
+  @override
   Future<Post> createPost(Post postToAdd) async {
     await Future.delayed(const Duration(seconds: 1));
     final newPost = Post(
@@ -53,4 +65,5 @@ class FakePostsDataSource extends PostDataSource {
   Future<void> deletePost(Post post) {
     throw UnimplementedFeatureException('Delete Post');
   }
+
 }

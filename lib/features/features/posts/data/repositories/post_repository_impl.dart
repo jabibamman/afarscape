@@ -26,4 +26,9 @@ class PostRepositoryImpl implements PostRepository {
   Future<void> deletePost(Post post) {
     return dataSource.deletePost(post);
   }
+
+  @override
+  Future<List<Post>> getPaginatedPosts(int offset, int limit) {
+    return dataSource.getPaginatedPosts(offset, limit);
+  }
 }
