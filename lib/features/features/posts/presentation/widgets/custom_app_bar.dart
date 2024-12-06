@@ -5,18 +5,26 @@ class CustomAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final canPop = Navigator.of(context).canPop();
 
     return SliverAppBar(
       floating: true,
       pinned: false,
-      backgroundColor: colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       elevation: 0,
+      leading: canPop
+          ? IconButton(
+        icon: const Icon(Icons.arrow_back, color: Colors.blueAccent),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      )
+          : null,
       centerTitle: true,
-      title: Icon(
+      title: const Icon(
         Icons.travel_explore,
         size: 30,
-        color: colorScheme.primary,
+        color: Colors.blueAccent,
       ),
     );
   }
