@@ -45,9 +45,9 @@ class PostListPage extends StatelessWidget {
                   ),
                 ),
                 if (state.posts.isEmpty)
-                  SliverFillRemaining(
+                  const SliverFillRemaining(
                     hasScrollBody: false,
-                    child: const Center(
+                    child: Center(
                       child: Text(
                         'No posts available.',
                         style: TextStyle(fontSize: 16, color: Colors.grey),
@@ -65,6 +65,12 @@ class PostListPage extends StatelessWidget {
             );
           }
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, '/addPost');
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }
