@@ -23,8 +23,12 @@ class PostRepositoryImpl implements PostRepository {
   }
 
   @override
-  Future<void> deletePost(Post post) {
-    return dataSource.deletePost(post);
+  Future<void> deletePost(String postId) async {
+    try {
+      await dataSource.deletePost(postId);
+    } catch (e) {
+      throw Exception('Failed to delete post with ID $postId');
+    }
   }
 
   @override

@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/post.dart';
 import '../blocs/post_bloc/post_bloc.dart';
+import '../blocs/post_bloc/post_event.dart';
 import '../blocs/post_bloc/post_state.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/post_detail_content.dart';
 import '../widgets/edit_post_dialog.dart';
+import '../widgets/delete_confirmation_dialog.dart';
 
 class PostDetailScreen extends StatelessWidget {
   final Post post;
@@ -15,8 +17,24 @@ class PostDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<PostBloc, PostState>(
+      body: BlocConsumer<PostBloc, PostState>(
+        listener: (context, state) {
+          if (state is PostDeleteSuccess) {
+            // Navigate back to the list screen after deletion is complete
+            Navigator.of(context).pop();
+          } else if (state is PostDeleteError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Failed to delete post.')),
+            );
+          }
+        },
         builder: (context, state) {
+          if (state is PostDeleting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
           Post currentPost = post;
 
           if (state is PostLoaded) {
@@ -40,9 +58,22 @@ class PostDetailScreen extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showEditDialog(context, post),
-        child: const Icon(Icons.edit),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            heroTag: 'edit',
+            onPressed: () => _showEditDialog(context, post),
+            child: const Icon(Icons.edit),
+          ),
+          const SizedBox(height: 16),
+          FloatingActionButton(
+            heroTag: 'delete',
+            onPressed: () => _confirmDelete(context, post),
+            backgroundColor: Colors.red,
+            child: const Icon(Icons.delete),
+          ),
+        ],
       ),
     );
   }
@@ -53,4 +84,16 @@ class PostDetailScreen extends StatelessWidget {
       builder: (context) => EditPostDialog(post: post),
     );
   }
+
+  void _confirmDelete(BuildContext context, Post post) {
+    showDialog(
+      context: context,
+      builder: (context) => DeleteConfirmationDialog(
+        onDelete: () {
+          context.read<PostBloc>().add(DeletePostEvent(post.id));
+        },
+      ),
+    );
+  }
 }
+

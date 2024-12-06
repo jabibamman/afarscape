@@ -22,49 +22,48 @@ class PostListPage extends StatelessWidget {
     scrollController.addListener(onScroll);
     return Scaffold(
       body: BlocBuilder<PostBloc, PostState>(
-        builder: (context, state) {
-          if (state is PostLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is PostLoaded) {
-            return CustomScrollView(
-              controller: scrollController,
-              slivers: [
-                const CustomAppBar(),
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                      if (index >= state.posts.length) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      final post = state.posts[index];
-                      return PostItem(post: post);
-                    },
-                    childCount: state.hasReachedEnd
-                        ? state.posts.length
-                        : state.posts.length + 1,
+          builder: (context, state) {
+            if (state is PostLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is PostLoaded) {
+              if (state.posts.isEmpty) {
+                return const Center(
+                  child: Text(
+                    'No posts available.',
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
                   ),
-                ),
-                if (state.posts.isEmpty)
-                  const SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: Center(
-                      child: Text(
-                        'No posts available.',
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
-                      ),
+                );
+              }
+
+              return CustomScrollView(
+                controller: scrollController,
+                slivers: [
+                  const CustomAppBar(),
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                        if (index >= state.posts.length) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                        final post = state.posts[index];
+                        return PostItem(post: post);
+                      },
+                      childCount: state.hasReachedEnd
+                          ? state.posts.length
+                          : state.posts.length + 1,
                     ),
                   ),
-              ],
-            );
-          } else {
-            return const Center(
-              child: Text(
-                'Failed to load posts.',
-                style: TextStyle(fontSize: 16, color: Colors.redAccent),
-              ),
-            );
+                ],
+              );
+            } else {
+              return const Center(
+                child: Text(
+                  'Failed to load posts.',
+                  style: TextStyle(fontSize: 16, color: Colors.redAccent),
+                ),
+              );
+            }
           }
-        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

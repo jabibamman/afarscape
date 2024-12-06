@@ -98,10 +98,10 @@ class MockPostDataSource extends _i1.Mock implements _i3.PostDataSource {
       ) as _i4.Future<_i2.Post>);
 
   @override
-  _i4.Future<void> deletePost(_i2.Post? post) => (super.noSuchMethod(
+  _i4.Future<void> deletePost(String? postId) => (super.noSuchMethod(
         Invocation.method(
           #deletePost,
-          [post],
+          [postId],
         ),
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),

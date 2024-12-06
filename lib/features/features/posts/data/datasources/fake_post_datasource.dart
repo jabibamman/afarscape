@@ -62,8 +62,14 @@ class FakePostsDataSource extends PostDataSource {
   }
 
   @override
-  Future<void> deletePost(Post post) {
-    throw UnimplementedFeatureException('Delete Post');
+  Future<void> deletePost(String postId) async {
+    await Future.delayed(const Duration(seconds: 1));
+    final index = _fakePosts.indexWhere((post) => post.id == postId);
+    if (index != -1) {
+      _fakePosts.removeAt(index);
+    } else {
+      throw PostNotFoundException('Post with id $postId not found.');
+    }
   }
 
 }

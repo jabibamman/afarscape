@@ -4,16 +4,22 @@ import 'package:afarscape/features/features/posts/presentation/blocs/post_bloc/p
 import '../../../domain/repositories/post_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../domain/usecases/delete_post_usecase.dart';
+import '../../../domain/usecases/update_post_usecase.dart';
+
 class PostBloc extends Bloc<PostEvent, PostState> {
   final PostRepository repository;
+  final DeletePostUseCase deletePostUseCase;
+  final UpdatePostUsecase updatePostUsecase;
 
   static const int _pageSize = 10;
   int _currentOffset = 0;
 
-  PostBloc({required this.repository}) : super(PostLoading()) {
+  PostBloc({ required this.updatePostUsecase, required this.deletePostUseCase, required this.repository}) : super(PostLoading()) {
     on<LoadPosts>(_onLoadPosts);
     on<LoadMorePosts>(_onLoadMorePosts);
     on<UpdatePostEvent>(_onUpdatePost);
+    on<DeletePostEvent>(_onDeletePost);
   }
 
   Future<void> _onLoadPosts(LoadPosts event, Emitter<PostState> emit) async {
@@ -55,11 +61,31 @@ class PostBloc extends Bloc<PostEvent, PostState> {
 
       emit(PostLoaded(updatedPosts, hasReachedEnd: currentState.hasReachedEnd));
 
-      try {
-        await repository.updatePost(event.updatedPost);
-      } catch (_) {
+      final result = await updatePostUsecase(event.updatedPost);
+
+      if (result.isFailure) {
         emit(PostError());
       }
     }
   }
+
+
+  Future<void> _onDeletePost(DeletePostEvent event, Emitter<PostState> emit) async {
+    if (state is PostLoaded) {
+      final currentState = state as PostLoaded;
+
+      emit(PostDeleting());
+
+      try {
+        await deletePostUseCase(event.postId);
+        final updatedPosts =
+        currentState.posts.where((p) => p.id != event.postId).toList();
+        emit(PostDeleteSuccess());
+        emit(PostLoaded(updatedPosts, hasReachedEnd: currentState.hasReachedEnd));
+      } catch (_) {
+        emit(PostDeleteError());
+      }
+    }
+  }
+
 }
