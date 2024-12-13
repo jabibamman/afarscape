@@ -1,3 +1,4 @@
+import 'package:afarscape/features/features/posts/presentation/widgets/create_post_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/post_bloc/post_bloc.dart';
@@ -11,68 +12,68 @@ class PostListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scrollController = ScrollController();
-    void onScroll() {
-      if (scrollController.position.pixels >= scrollController.position.maxScrollExtent) {
-        context.read<PostBloc>().add(LoadMorePosts());
-      }
-    }
-
-    scrollController.addListener(onScroll);
     return Scaffold(
-      body: BlocBuilder<PostBloc, PostState>(
-          builder: (context, state) {
-            if (state is PostLoading) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state is PostLoaded) {
-              if (state.posts.isEmpty) {
-                return const Center(
-                  child: Text(
-                    'No posts available.',
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
-                  ),
-                );
-              }
-
-              return CustomScrollView(
-                controller: scrollController,
-                slivers: [
-                  const CustomAppBar(),
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                        if (index >= state.posts.length) {
-                          return const Center(child: CircularProgressIndicator());
-                        }
-                        final post = state.posts[index];
-                        return PostItem(post: post);
-                      },
-                      childCount: state.hasReachedEnd
-                          ? state.posts.length
-                          : state.posts.length + 1,
-                    ),
-                  ),
-                ],
-              );
-            } else if (state is PostDeleting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else {
+      body: BlocConsumer<PostBloc, PostState>(
+        listener: (context, state) {
+          if (state.status == PostStatus.error) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.errorMessage ?? 'An error occurred')),
+            );
+          }
+        },
+        builder: (context, state) {
+          if (state.status == PostStatus.loading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state.status == PostStatus.success || state.status == PostStatus.loaded) {
+            if (state.posts.isEmpty) {
               return const Center(
                 child: Text(
-                  'Failed to load posts.',
-                  style: TextStyle(fontSize: 16, color: Colors.redAccent),
+                  'No posts available.',
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
                 ),
               );
             }
+
+            return CustomScrollView(
+              slivers: [
+                const CustomAppBar(),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                      final post = state.posts[index];
+                      return PostItem(post: post);
+                    },
+                    childCount: state.posts.length,
+                  ),
+                ),
+              ],
+            );
+          } else if (state.status == PostStatus.deleting || state.status == PostStatus.creating) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            return const Center(
+              child: Text(
+                'Failed to load posts.',
+                style: TextStyle(fontSize: 16, color: Colors.redAccent),
+              ),
+            );
           }
+        },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/addPost');
-        },
+        onPressed: () => _showAddPostDialog(context),
         child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  void _showAddPostDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => CreatePostDialog(
+        onCreatePost: (newPost) {
+          context.read<PostBloc>().add(AddPostEvent(newPost));
+        },
       ),
     );
   }

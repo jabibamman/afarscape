@@ -19,24 +19,23 @@ class PostDetailScreen extends StatelessWidget {
     return Scaffold(
       body: BlocConsumer<PostBloc, PostState>(
         listener: (context, state) {
-          if (state is PostDeleteSuccess) {
+          if (state.status == PostStatus.success) {
             Navigator.of(context).pop();
-          } else if (state is PostDeleteError) {
+          } else if (state.status == PostStatus.error) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Failed to delete post.')),
+              SnackBar(content: Text(state.errorMessage ?? 'An error occurred')),
             );
           }
         },
         builder: (context, state) {
-          if (state is PostDeleting) {
+          if (state.status == PostStatus.deleting) {
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
 
           Post currentPost = post;
-
-          if (state is PostLoaded) {
+          if (state.status == PostStatus.success) {
             currentPost = state.posts.firstWhere(
                   (p) => p.id == post.id,
               orElse: () => post,
@@ -95,4 +94,3 @@ class PostDetailScreen extends StatelessWidget {
     );
   }
 }
-

@@ -1,19 +1,40 @@
 import '../../../domain/entities/post.dart';
 
-abstract class PostState {}
-
-class PostLoading extends PostState {}
-
-class PostLoaded extends PostState {
-  final List<Post> posts;
-  final bool hasReachedEnd;
-  PostLoaded(this.posts, {required this.hasReachedEnd});
+enum PostStatus {
+  initial,
+  loading,
+  loaded,
+  creating,
+  deleting,
+  success,
+  error,
+  updating,
 }
 
-class PostDeleting extends PostState {}
+class PostState {
+  final PostStatus status;
+  final List<Post> posts;
+  final bool hasReachedEnd;
+  final String? errorMessage;
 
-class PostDeleteSuccess extends PostState {}
+  const PostState({
+    this.status = PostStatus.initial,
+    this.posts = const [],
+    this.hasReachedEnd = false,
+    this.errorMessage,
+  });
 
-class PostDeleteError extends PostState {}
-
-class PostError extends PostState {}
+  PostState copyWith({
+    PostStatus? status,
+    List<Post>? posts,
+    bool? hasReachedEnd,
+    String? errorMessage,
+  }) {
+    return PostState(
+      status: status ?? this.status,
+      posts: posts ?? this.posts,
+      hasReachedEnd: hasReachedEnd ?? this.hasReachedEnd,
+      errorMessage: errorMessage,
+    );
+  }
+}

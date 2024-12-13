@@ -12,3 +12,8 @@ class DeletePostEvent extends PostEvent {
   final String postId;
   DeletePostEvent(this.postId);
 }
+class AddPostEvent extends PostEvent {
+  final Post newPost;
+
+  AddPostEvent(this.newPost);
+}

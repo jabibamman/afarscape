@@ -1,4 +1,3 @@
-import '../../../../../core/utils/result.dart';
 import '../repositories/post_repository.dart';
 
 class DeletePostUseCase {
@@ -6,12 +5,7 @@ class DeletePostUseCase {
 
   DeletePostUseCase(this.repository);
 
-  Future<Result<void>> call(String postId) async {
-    try {
-      await repository.deletePost(postId);
-      return const Result.success(null);
-    } catch (e) {
-      return Result.failure(e.toString());
-    }
+  Future<void> call(String postId) async {
+    await repository.deletePost(postId);
   }
 }
