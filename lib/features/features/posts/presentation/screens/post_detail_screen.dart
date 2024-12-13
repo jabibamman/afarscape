@@ -27,6 +27,7 @@ class PostDetailScreen extends StatelessWidget {
         },
         builder: (context, state) {
           Post currentPost = post;
+
           if (state.posts.isNotEmpty) {
             final updatedPost = state.posts.firstWhere(
                   (p) => p.id == post.id,
@@ -62,8 +63,8 @@ class PostDetailScreen extends StatelessWidget {
   Widget _buildFloatingActionButtons(BuildContext context) {
     return BlocBuilder<PostBloc, PostState>(
       builder: (context, state) {
-        // Déterminer le post mis à jour
         Post currentPost = post;
+
         if (state.posts.isNotEmpty) {
           final updatedPost = state.posts.firstWhere(
                 (p) => p.id == post.id,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/post.dart';
+import 'image_viewer.dart';
 
 class PostDetailContent extends StatelessWidget {
   final Post post;
@@ -14,14 +15,23 @@ class PostDetailContent extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (post.imageUrl != null)
-            Container(
-              height: 250,
-              margin: const EdgeInsets.only(bottom: 16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                image: DecorationImage(
-                  image: NetworkImage(post.imageUrl!),
-                  fit: BoxFit.cover,
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ImageViewer(imageUrl: post.imageUrl!),
+                  ),
+                );
+              },
+              child: Container(
+                height: 250,
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  image: DecorationImage(
+                    image: NetworkImage(post.imageUrl!),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
