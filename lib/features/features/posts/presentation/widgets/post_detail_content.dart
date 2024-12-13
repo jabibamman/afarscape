@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/post.dart';
+import 'image_viewer.dart';
 
 class PostDetailContent extends StatelessWidget {
   final Post post;
@@ -15,7 +16,13 @@ class PostDetailContent extends StatelessWidget {
         children: [
           if (post.imageUrl != null)
             GestureDetector(
-              onTap: () => _showImageDialog(context, post.imageUrl!),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ImageViewer(imageUrl: post.imageUrl!),
+                  ),
+                );
+              },
               child: Container(
                 height: 250,
                 margin: const EdgeInsets.only(bottom: 16),
