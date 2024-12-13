@@ -27,78 +27,89 @@ class _PostListPageState extends State<PostListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          CustomAppBar(
-            onSearchChanged: (query) {
-              setState(() {
-                _searchQuery = query;
-              });
-            },
-            onSearchCancelled: () {
-              setState(() {
-                _searchQuery = '';
-              });
-            },
-          ),
-          SliverToBoxAdapter(
-            child: _buildTabSwitcher(),
-          ),
-          BlocBuilder<PostBloc, PostState>(
-            builder: (context, state) {
-              if (state.status == PostStatus.loading) {
-                return const SliverFillRemaining(
-                  child: Center(child: CircularProgressIndicator()),
-                );
-              } else if (state.status == PostStatus.error) {
-                return SliverFillRemaining(
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Failed to load posts.',
-                          style: TextStyle(fontSize: 16, color: Colors.redAccent),
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: () {
-                            context.read<PostBloc>().add(LoadPosts());
-                          },
-                          child: const Text('Retry'),
-                        ),
-                      ],
+      backgroundColor: theme.colorScheme.surface,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          context.read<PostBloc>().add(LoadPosts());
+        },
+        child: CustomScrollView(
+          slivers: [
+            CustomAppBar(
+              onSearchChanged: (query) {
+                setState(() {
+                  _searchQuery = query;
+                });
+              },
+              onSearchCancelled: () {
+                setState(() {
+                  _searchQuery = '';
+                });
+              },
+            ),
+            SliverToBoxAdapter(
+              child: _buildTabSwitcher(theme),
+            ),
+            BlocBuilder<PostBloc, PostState>(
+              builder: (context, state) {
+                if (state.status == PostStatus.loading) {
+                  return const SliverFillRemaining(
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                } else if (state.status == PostStatus.error) {
+                  return SliverFillRemaining(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Failed to load posts.',
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: theme.colorScheme.error,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () {
+                              context.read<PostBloc>().add(LoadPosts());
+                            },
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
                     ),
+                  );
+                }
+
+                final allPosts = state.posts;
+                final favoritePosts = state.posts.where((post) => post.isFavorite).toList();
+                final postsToShow = _showFavorites ? favoritePosts : allPosts;
+                final filteredPosts = _getFilteredPosts(postsToShow);
+
+                if (filteredPosts.isEmpty) {
+                  return SliverFillRemaining(
+                    child: _buildNoResultsMessage(theme),
+                  );
+                }
+
+                return SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                      final post = filteredPosts[index];
+                      return PostItem(
+                        key: ValueKey(post.id),
+                        post: post,
+                      );
+                    },
+                    childCount: filteredPosts.length,
                   ),
                 );
-              }
-
-              final allPosts = state.posts;
-              final favoritePosts = state.posts.where((post) => post.isFavorite).toList();
-              final postsToShow = _showFavorites ? favoritePosts : allPosts;
-              final filteredPosts = _getFilteredPosts(postsToShow);
-
-              if (filteredPosts.isEmpty) {
-                return SliverFillRemaining(
-                  child: _buildNoResultsMessage(),
-                );
-              }
-
-              return SliverList(
-                delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                    final post = filteredPosts[index];
-                    return PostItem(
-                        key: ValueKey(post.id),
-                        post: post);
-                  },
-                  childCount: filteredPosts.length,
-                ),
-              );
-            },
-          ),
-        ],
+              },
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddPostDialog(context),
@@ -107,20 +118,20 @@ class _PostListPageState extends State<PostListPage> {
     );
   }
 
-  Widget _buildTabSwitcher() {
+  Widget _buildTabSwitcher(ThemeData theme) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _buildTabButton('All Posts', !_showFavorites),
-          _buildTabButton('Favorites', _showFavorites),
+          _buildTabButton('All Posts', !_showFavorites, theme),
+          _buildTabButton('Favorites', _showFavorites, theme),
         ],
       ),
     );
   }
 
-  Widget _buildTabButton(String title, bool isActive) {
+  Widget _buildTabButton(String title, bool isActive, ThemeData theme) {
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -131,13 +142,17 @@ class _PostListPageState extends State<PostListPage> {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         decoration: BoxDecoration(
-          color: isActive ? Colors.blue : Colors.grey[300],
+          color: isActive
+              ? theme.colorScheme.primary
+              : theme.colorScheme.surfaceVariant,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
           title,
-          style: TextStyle(
-            color: isActive ? Colors.white : Colors.black,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: isActive
+                ? theme.colorScheme.onPrimary
+                : theme.colorScheme.onSurface,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -151,19 +166,19 @@ class _PostListPageState extends State<PostListPage> {
     }).toList();
   }
 
-  Widget _buildNoResultsMessage() {
+  Widget _buildNoResultsMessage(ThemeData theme) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.search_off, size: 48, color: Colors.grey),
+          Icon(Icons.search_off, size: 48, color: theme.colorScheme.onSurface),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'No posts found. Try a different search term.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16, color: Colors.grey),
+            style: theme.textTheme.bodyLarge,
           ),
           const SizedBox(height: 16),
           ElevatedButton(

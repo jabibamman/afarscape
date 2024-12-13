@@ -12,6 +12,9 @@ class PostDetailContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -44,16 +47,15 @@ class PostDetailContent extends StatelessWidget {
               Expanded(
                 child: Text(
                   post.title,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: textTheme.titleLarge,
                 ),
               ),
               IconButton(
                 icon: Icon(
                   post.isFavorite ? Icons.favorite : Icons.favorite_border,
-                  color: post.isFavorite ? Colors.red : Colors.grey,
+                  color: post.isFavorite
+                      ? theme.colorScheme.error
+                      : theme.colorScheme.onSurface.withOpacity(0.5),
                 ),
                 onPressed: () {
                   context.read<PostBloc>().add(ToggleFavoriteEvent(post.id));
@@ -64,7 +66,7 @@ class PostDetailContent extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             post.description,
-            style: const TextStyle(fontSize: 16),
+            style: textTheme.bodyMedium,
           ),
         ],
       ),

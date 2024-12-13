@@ -71,9 +71,11 @@ class PostItem extends StatelessWidget {
                       fontSize: 18,
                     ),
                   ),
-                  subtitle: const Text(
-                    'Tap to see details',
-                    style: TextStyle(fontSize: 14),
+                  subtitle: Text(
+                    _buildSubtitle(post.description),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 14),
                   ),
                   trailing: IconButton(
                     icon: Icon(
@@ -91,6 +93,18 @@ class PostItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _buildSubtitle(String description) {
+    if (description.isEmpty) {
+      return "No description available";
+    }
+    const int maxWords = 10;
+    final words = description.split(' ');
+    if (words.length <= maxWords) {
+      return description;
+    }
+    return words.sublist(0, maxWords).join(' ') + '...';
   }
 
   Widget _buildEditBackground() {

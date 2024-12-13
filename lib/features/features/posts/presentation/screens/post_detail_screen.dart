@@ -23,6 +23,8 @@ class PostDetailScreen extends StatelessWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.errorMessage ?? 'An error occurred')),
             );
+          } else if (state.status == PostStatus.deleting) {
+            Navigator.pop(context);
           }
         },
         builder: (context, state) {
