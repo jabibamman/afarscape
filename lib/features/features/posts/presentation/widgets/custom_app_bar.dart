@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 class CustomAppBar extends StatefulWidget {
   final ValueChanged<String>? onSearchChanged;
   final VoidCallback? onSearchCancelled;
+  final bool showBackButton;
+  final bool showSearching;
 
   const CustomAppBar({
     super.key,
     this.onSearchChanged,
     this.onSearchCancelled,
+    this.showBackButton = false,
+    this.showSearching = true,
   });
 
   @override
@@ -34,35 +38,57 @@ class _CustomAppBarState extends State<CustomAppBar> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return SliverAppBar(
       floating: true,
       pinned: false,
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: theme.colorScheme.surface,
       elevation: 0,
-      leading: _isSearching
+      leading: widget.showBackButton
           ? IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.blueAccent),
-        onPressed: _cancelSearch,
+        icon: Icon(
+          Icons.arrow_back,
+          color: theme.colorScheme.primary,
+        ),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
       )
           : null,
       centerTitle: !_isSearching,
-      title: _isSearching
+      title: widget.showSearching && _isSearching
           ? TextField(
         controller: _searchController,
         onChanged: widget.onSearchChanged,
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           hintText: 'Search...',
+          hintStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
           border: InputBorder.none,
         ),
+        style: TextStyle(color: theme.colorScheme.onSurface),
       )
-          : GestureDetector(
+          : widget.showSearching
+          ? GestureDetector(
         onTap: _startSearch,
-        child: const Icon(
+        child: Icon(
           Icons.travel_explore,
           size: 30,
-          color: Colors.blueAccent,
+          color: theme.colorScheme.primary,
         ),
-      ),
+      )
+          : null,
+      actions: widget.showSearching && _isSearching
+          ? [
+        IconButton(
+          icon: Icon(
+            Icons.close,
+            color: theme.colorScheme.primary,
+          ),
+          onPressed: _cancelSearch,
+        ),
+      ]
+          : [],
     );
   }
 }

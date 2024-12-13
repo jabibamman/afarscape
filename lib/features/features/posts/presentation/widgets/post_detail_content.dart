@@ -34,9 +34,21 @@ class PostDetailContent extends StatelessWidget {
                 margin: const EdgeInsets.only(bottom: 16),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  image: DecorationImage(
-                    image: NetworkImage(post.imageUrl!),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(
+                    post.imageUrl!,
                     fit: BoxFit.cover,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return _buildPlaceholderImage();
+                    },
                   ),
                 ),
               ),
@@ -69,6 +81,18 @@ class PostDetailContent extends StatelessWidget {
             style: textTheme.bodyMedium,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPlaceholderImage() {
+    return Container(
+      color: Colors.grey[300],
+      alignment: Alignment.center,
+      child: const Icon(
+        Icons.broken_image,
+        color: Colors.grey,
+        size: 50,
       ),
     );
   }

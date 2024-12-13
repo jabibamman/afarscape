@@ -46,7 +46,10 @@ class PostDetailScreen extends StatelessWidget {
 
           return CustomScrollView(
             slivers: [
-              const CustomAppBar(),
+              const CustomAppBar(
+                showBackButton: true,
+                showSearching: false,
+              ),
               SliverList(
                 delegate: SliverChildListDelegate(
                   [

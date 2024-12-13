@@ -48,18 +48,22 @@ class PostItem extends StatelessWidget {
                 width: 100,
                 height: 100,
                 margin: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  image: post.imageUrl != null
-                      ? DecorationImage(
-                    image: NetworkImage(post.imageUrl!),
+                  child: post.imageUrl != null
+                      ? Image.network(
+                    post.imageUrl!,
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) =>
+                        _buildPlaceholderImage(),
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    },
                   )
-                      : const DecorationImage(
-                    image: NetworkImage('https://via.placeholder.com/150'),
-                    fit: BoxFit.cover,
-                  ),
+                      : _buildPlaceholderImage(),
                 ),
               ),
               Expanded(
@@ -91,6 +95,18 @@ class PostItem extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildPlaceholderImage() {
+    return Container(
+      color: Colors.grey[300],
+      alignment: Alignment.center,
+      child: const Icon(
+        Icons.broken_image,
+        color: Colors.grey,
+        size: 40,
       ),
     );
   }
