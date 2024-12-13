@@ -57,8 +57,7 @@ class PostItem extends StatelessWidget {
                     fit: BoxFit.cover,
                   )
                       : const DecorationImage(
-                    image: NetworkImage(
-                        'https://via.placeholder.com/150'),
+                    image: NetworkImage('https://via.placeholder.com/150'),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -75,6 +74,15 @@ class PostItem extends StatelessWidget {
                   subtitle: const Text(
                     'Tap to see details',
                     style: TextStyle(fontSize: 14),
+                  ),
+                  trailing: IconButton(
+                    icon: Icon(
+                      post.isFavorite ? Icons.favorite : Icons.favorite_border,
+                      color: post.isFavorite ? Colors.red : Colors.grey,
+                    ),
+                    onPressed: () {
+                      context.read<PostBloc>().add(ToggleFavoriteEvent(post.id));
+                    },
                   ),
                 ),
               ),
@@ -124,6 +132,7 @@ class PostItem extends StatelessWidget {
           context.read<PostBloc>().add(DeletePostEvent(post.id));
         },
       ),
-    ) ?? false;
+    ) ??
+        false;
   }
 }

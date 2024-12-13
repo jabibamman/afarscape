@@ -17,3 +17,8 @@ class AddPostEvent extends PostEvent {
 
   AddPostEvent(this.newPost);
 }
+
+class ToggleFavoriteEvent extends PostEvent {
+  final String postId;
+  ToggleFavoriteEvent(this.postId);
+}

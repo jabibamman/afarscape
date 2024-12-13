@@ -29,6 +29,8 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     on<UpdatePostEvent>(_onUpdatePost);
     on<DeletePostEvent>(_onDeletePost);
     on<AddPostEvent>(_onCreatePost);
+    on<ToggleFavoriteEvent>(_onToggleFavorite);
+
   }
 
   Future<void> _onLoadPosts(LoadPosts event, Emitter<PostState> emit) async {
@@ -133,6 +135,19 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         status: PostStatus.error,
         errorMessage: 'Failed to create post.',
       ));
+    }
+  }
+
+  Future<void> _onToggleFavorite(ToggleFavoriteEvent event, Emitter<PostState> emit) async {
+    if (state.status == PostStatus.loaded) {
+      final updatedPosts = state.posts.map((post) {
+        if (post.id == event.postId) {
+          return post.copyWith(isFavorite: !post.isFavorite);
+        }
+        return post;
+      }).toList();
+
+      emit(state.copyWith(posts: updatedPosts));
     }
   }
 
