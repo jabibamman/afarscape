@@ -35,24 +35,29 @@ class PostBloc extends Bloc<PostEvent, PostState> {
 
   Future<void> _onLoadPosts(LoadPosts event, Emitter<PostState> emit) async {
     emit(state.copyWith(status: PostStatus.loading));
-    _currentOffset = 0;
-
     try {
-      final posts = await repository.getPaginatedPosts(_currentOffset, _pageSize);
-      _currentOffset += posts.length;
+      final postsFromServer = await repository.getPosts();
+
+      final updatedPosts = postsFromServer.map((post) {
+        final existingPost = state.posts.firstWhere(
+              (p) => p.id == post.id,
+          orElse: () => post,
+        );
+        return post.copyWith(isFavorite: existingPost.isFavorite);
+      }).toList();
 
       emit(state.copyWith(
         status: PostStatus.loaded,
-        posts: posts,
-        hasReachedEnd: posts.length < _pageSize,
+        posts: updatedPosts,
       ));
-    } catch (_) {
+    } catch (e) {
       emit(state.copyWith(
         status: PostStatus.error,
-        errorMessage: 'Failed to load posts.',
+        errorMessage: e.toString(),
       ));
     }
   }
+
   Future<void> _onLoadMorePosts(LoadMorePosts event, Emitter<PostState> emit) async {
     if (state.status != PostStatus.loaded || state.hasReachedEnd) return;
 
@@ -103,6 +108,8 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         status: PostStatus.success,
         posts: updatedPosts,
       ));
+      add(LoadPosts());
+
     } catch (e) {
       emit(state.copyWith(
         status: PostStatus.error,
@@ -150,5 +157,6 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       emit(state.copyWith(posts: updatedPosts));
     }
   }
+
 
 }
