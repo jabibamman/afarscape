@@ -15,7 +15,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   final UpdatePostUsecase updatePostUsecase;
   final CreatePostUseCase createPostUseCase;
 
-  static const int _pageSize = 10;
+  static const int _pageSize = 12;
   int _currentOffset = 0;
 
   PostBloc({
@@ -82,10 +82,10 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         status: PostStatus.loaded,
         posts: updatedPosts,
       ));
-    } catch (_) {
+    } catch (e) {
       emit(state.copyWith(
         status: PostStatus.error,
-        errorMessage: 'Failed to update post.',
+        errorMessage: 'Failed to update Post: $e',
       ));
     }
   }

@@ -13,6 +13,18 @@ class PostDetailContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          if (post.imageUrl != null)
+            Container(
+              height: 250,
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                image: DecorationImage(
+                  image: NetworkImage(post.imageUrl!),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
           Text(
             post.title,
             style: const TextStyle(
@@ -24,21 +36,6 @@ class PostDetailContent extends StatelessWidget {
           Text(
             post.description,
             style: const TextStyle(fontSize: 16),
-          ),
-          const SizedBox(height: 16),
-          Container(
-            height: 200,
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Center(
-              child: Icon(
-                Icons.image,
-                size: 100,
-                color: Colors.grey,
-              ),
-            ),
           ),
         ],
       ),

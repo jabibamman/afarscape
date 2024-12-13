@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/utils/validation_utils.dart';
 import '../../domain/entities/post.dart';
 
 class CreatePostDialog extends StatefulWidget {
@@ -13,6 +14,7 @@ class CreatePostDialog extends StatefulWidget {
 class CreatePostDialogState extends State<CreatePostDialog> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController imageUrlController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String? errorMessage;
 
@@ -22,6 +24,7 @@ class CreatePostDialogState extends State<CreatePostDialog> {
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         title: titleController.text.trim(),
         description: descriptionController.text.trim(),
+        imageUrl: imageUrlController.text.isNotEmpty ? imageUrlController.text.trim() : null,
       );
 
       widget.onCreatePost(newPost);
@@ -45,7 +48,7 @@ class CreatePostDialogState extends State<CreatePostDialog> {
             children: [
               TextFormField(
                 controller: titleController,
-                decoration: const InputDecoration(labelText: 'Title'),
+                decoration: const InputDecoration(labelText: 'Title*'),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'Title is required.';
@@ -58,6 +61,17 @@ class CreatePostDialogState extends State<CreatePostDialog> {
                 controller: descriptionController,
                 decoration: const InputDecoration(labelText: 'Description'),
                 maxLines: 3,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: imageUrlController,
+                decoration: const InputDecoration(labelText: 'Image URL'),
+                validator: (value) {
+                  if (value != null && value.isNotEmpty && !_isValidUrl(value)) {
+                    return 'Please enter a valid URL.';
+                  }
+                  return null;
+                },
               ),
               if (errorMessage != null) ...[
                 const SizedBox(height: 16),
@@ -81,5 +95,9 @@ class CreatePostDialogState extends State<CreatePostDialog> {
         ),
       ],
     );
+  }
+
+  bool _isValidUrl(String value) {
+    return UrlValidator.isValid(value);
   }
 }

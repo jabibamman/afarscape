@@ -15,23 +15,32 @@ class EditPostDialog extends StatelessWidget {
     TextEditingController(text: post.title);
     final TextEditingController descriptionController =
     TextEditingController(text: post.description);
+    final TextEditingController imageUrlController =
+    TextEditingController(text: post.imageUrl);
 
     return AlertDialog(
       title: const Text('Edit Post'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            controller: titleController,
-            decoration: const InputDecoration(labelText: 'Title'),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: descriptionController,
-            decoration: const InputDecoration(labelText: 'Description'),
-            maxLines: 3,
-          ),
-        ],
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: titleController,
+              decoration: const InputDecoration(labelText: 'Title'),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: descriptionController,
+              decoration: const InputDecoration(labelText: 'Description'),
+              maxLines: 3,
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: imageUrlController,
+              decoration: const InputDecoration(labelText: 'Image URL'),
+            ),
+          ],
+        ),
       ),
       actions: [
         TextButton(
@@ -44,8 +53,9 @@ class EditPostDialog extends StatelessWidget {
           onPressed: () {
             final updatedPost = Post(
               id: post.id,
-              title: titleController.text,
-              description: descriptionController.text,
+              title: titleController.text.trim(),
+              description: descriptionController.text.trim(),
+              imageUrl: imageUrlController.text.trim(),
             );
 
             context.read<PostBloc>().add(UpdatePostEvent(updatedPost));

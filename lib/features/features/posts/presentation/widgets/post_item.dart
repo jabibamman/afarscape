@@ -42,24 +42,43 @@ class PostItem extends StatelessWidget {
             vertical: 8,
           ),
           elevation: 2,
-          child: ListTile(
-            title: Text(
-              post.title,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
+          child: Row(
+            children: [
+              Container(
+                width: 100,
+                height: 100,
+                margin: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(8),
+                  image: post.imageUrl != null
+                      ? DecorationImage(
+                    image: NetworkImage(post.imageUrl!),
+                    fit: BoxFit.cover,
+                  )
+                      : const DecorationImage(
+                    image: NetworkImage(
+                        'https://via.placeholder.com/150'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
-            ),
-            subtitle: Text(
-              post.description,
-              style: const TextStyle(fontSize: 14),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            leading: const Icon(
-              Icons.place,
-              color: Colors.blueAccent,
-            ),
+              Expanded(
+                child: ListTile(
+                  title: Text(
+                    post.title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                  subtitle: const Text(
+                    'Tap to see details',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

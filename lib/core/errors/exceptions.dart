@@ -15,3 +15,12 @@ class UnimplementedFeatureException implements Exception {
   @override
   String toString() => 'UnimplementedFeatureException: $featureName is not implemented.';
 }
+
+class InvalidPostException implements Exception {
+  final String message;
+
+  InvalidPostException([this.message = 'Invalid post.']);
+
+  @override
+  String toString() => message;
+}

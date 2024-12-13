@@ -19,26 +19,25 @@ class PostDetailScreen extends StatelessWidget {
     return Scaffold(
       body: BlocConsumer<PostBloc, PostState>(
         listener: (context, state) {
-          if (state.status == PostStatus.success) {
-            Navigator.of(context).pop();
-          } else if (state.status == PostStatus.error) {
+          if (state.status == PostStatus.error) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.errorMessage ?? 'An error occurred')),
             );
           }
         },
         builder: (context, state) {
+          Post currentPost = post;
+          if (state.posts.isNotEmpty) {
+            final updatedPost = state.posts.firstWhere(
+                  (p) => p.id == post.id,
+              orElse: () => post,
+            );
+            currentPost = updatedPost;
+          }
+
           if (state.status == PostStatus.deleting) {
             return const Center(
               child: CircularProgressIndicator(),
-            );
-          }
-
-          Post currentPost = post;
-          if (state.status == PostStatus.success) {
-            currentPost = state.posts.firstWhere(
-                  (p) => p.id == post.id,
-              orElse: () => post,
             );
           }
 
@@ -56,23 +55,41 @@ class PostDetailScreen extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            heroTag: 'edit',
-            onPressed: () => _showEditDialog(context, post),
-            child: const Icon(Icons.edit),
-          ),
-          const SizedBox(height: 16),
-          FloatingActionButton(
-            heroTag: 'delete',
-            onPressed: () => _confirmDelete(context, post),
-            backgroundColor: Colors.red,
-            child: const Icon(Icons.delete),
-          ),
-        ],
-      ),
+      floatingActionButton: _buildFloatingActionButtons(context),
+    );
+  }
+
+  Widget _buildFloatingActionButtons(BuildContext context) {
+    return BlocBuilder<PostBloc, PostState>(
+      builder: (context, state) {
+        // Déterminer le post mis à jour
+        Post currentPost = post;
+        if (state.posts.isNotEmpty) {
+          final updatedPost = state.posts.firstWhere(
+                (p) => p.id == post.id,
+            orElse: () => post,
+          );
+          currentPost = updatedPost;
+        }
+
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FloatingActionButton(
+              heroTag: 'edit',
+              onPressed: () => _showEditDialog(context, currentPost),
+              child: const Icon(Icons.edit),
+            ),
+            const SizedBox(height: 16),
+            FloatingActionButton(
+              heroTag: 'delete',
+              onPressed: () => _confirmDelete(context, currentPost),
+              backgroundColor: Colors.red,
+              child: const Icon(Icons.delete),
+            ),
+          ],
+        );
+      },
     );
   }
 

@@ -48,13 +48,27 @@ class PostListPage extends StatelessWidget {
                 ),
               ],
             );
-          } else if (state.status == PostStatus.deleting || state.status == PostStatus.creating) {
+          } else if (state.status == PostStatus.deleting ||
+              state.status == PostStatus.creating ||
+              state.status == PostStatus.updating) {
             return const Center(child: CircularProgressIndicator());
           } else {
-            return const Center(
-              child: Text(
-                'Failed to load posts.',
-                style: TextStyle(fontSize: 16, color: Colors.redAccent),
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Failed to load posts.',
+                    style: TextStyle(fontSize: 16, color: Colors.redAccent),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<PostBloc>().add(LoadPosts());
+                    },
+                    child: const Text('Retry'),
+                  ),
+                ],
               ),
             );
           }
